@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import static java.nio.file.StandardOpenOption.CREATE_NEW;
 
 @Service
 public class AvatarServiceImpl implements AvatarService {
+    Logger avatarLogger = LoggerFactory.getLogger(AvatarServiceImpl.class);
     private AvatarRepository avatarRepository;
     private StudentRepository studentRepository;
     private Student student;
@@ -27,6 +30,7 @@ public class AvatarServiceImpl implements AvatarService {
     private String avatarsDir;
 
     public void uploadAvatar ( Long studentId, MultipartFile avatarFile ) throws IOException {
+        avatarLogger.info("Вызван метод для загрузки аватара");
         Student student = studentRepository.findById(studentId).orElseThrow();
         Path filePath = Path.of(avatarsDir, student + "." + getExtensions(avatarFile.getOriginalFilename()));
         Files.createDirectories(filePath.getParent());
@@ -49,6 +53,7 @@ public class AvatarServiceImpl implements AvatarService {
     }
 
     public Avatar findAvatar ( Long id ) {
+        avatarLogger.info("Вызван метод для поиска аватара");
         return avatarRepository.findAvatarById(id).orElse(new Avatar());
     }
 
@@ -57,6 +62,7 @@ public class AvatarServiceImpl implements AvatarService {
     }
 
     public List<Avatar> getAllAvatars ( Integer pageNumber, Integer pageSize ) {
+        avatarLogger.info("Вызван метод для вывода всех аватаров");
         PageRequest pageRequest = PageRequest.of(pageNumber - 1, pageSize);
         return avatarRepository.findAll(pageRequest).getContent();
     }
